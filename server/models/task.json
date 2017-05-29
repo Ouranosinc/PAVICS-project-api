@@ -1,0 +1,42 @@
+{
+  "name": "Task",
+  "plural": "tasks",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "inputs": {
+      "type": [
+        "object"
+      ]
+    },
+    "linked_inputs": {
+      "type": [
+        "object"
+      ]
+    },
+    "progress_range": {
+      "type": [
+        "number"
+      ]
+    }
+  },
+  "validations": [],
+  "relations": {
+    "workflow": {
+      "type": "belongsTo",
+      "model": "Workflow",
+      "foreignKey": "workflowId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

@@ -1,19 +1,10 @@
 {
-  "name": "Project",
-  "plural": "Projects",
+  "name": "Research",
+  "plural": "Researchs",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
     "validateUpsert": true
-  },
-  "mixins": {
-    "TimeStamp": {
-      "createdAt": "createdOn",
-      "updatedAt": "updatedOn",
-      "required": false,
-      "validateUpsert": true,
-      "silenceWarnings": false
-    }
   },
   "properties": {
     "name": {
@@ -23,19 +14,19 @@
   },
   "validations": [],
   "relations": {
-    "researchs": {
+    "facets": {
       "type": "hasMany",
-      "model": "Research",
+      "model": "Facet",
       "foreignKey": ""
+    },
+    "project": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
     },
     "datasets": {
       "type": "hasMany",
       "model": "Dataset",
-      "foreignKey": ""
-    },
-    "workflows": {
-      "type": "hasMany",
-      "model": "Workflow",
       "foreignKey": ""
     }
   },
