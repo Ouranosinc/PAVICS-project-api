@@ -12,6 +12,7 @@ var lbTables = [
   'Facet',
   'Project',
   'Research',
+  'Researcher',
   'Task',
   'Workflow'
 ];

@@ -37,6 +37,11 @@
       "type": "hasMany",
       "model": "Workflow",
       "foreignKey": ""
+    },
+    "researcher": {
+      "type": "belongsTo",
+      "model": "Researcher",
+      "foreignKey": "researcherId"
     }
   },
   "acls": [],

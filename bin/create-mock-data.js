@@ -8,50 +8,53 @@ db.automigrate('User', function(err) {
   var users = [
     {
       email: 'renaud.hebert-legault@crim.ca',
-      username: 'Renaud0009',
+      username: 'renaud',
       password: 'qwerty',
       createdAt: new Date(),
       lastModifiedAt: new Date()
     },
     {
       email: 'felix.gagnon-grenier@crim.ca',
-      username: 'Fractal',
+      username: 'fractal',
       password: 'qwerty',
       createdAt: new Date(),
       lastModifiedAt: new Date()
     }
   ];
-  var count = users.length;
+  let count = users.length;
+  let createdResearchers = []
   users.forEach(function(user) {
-    app.models.User.create(user, function(err, model) {
+    app.models.Researcher.create(user, function(err, model) {
       if (err) throw err;
+      createdResearchers.push(model);
+      console.log('Created Researcher:', model);
 
-      console.log('Created User:', model);
+      let projects = [
+        {
+          name: `project-${model.username}-1`,
+          researcherId: model.id
+        },
+        {
+          name: `project-${model.username}-2`,
+          researcherId: model.id
+        },
+        {
+          name: `project-${model.username}-3`,
+          researcherId: model.id
+        }
+      ];
+      var count = projects.length;
+      projects.forEach(function(project) {
+        app.models.Project.create(project, function(err, model) {
+          if (err) throw err;
 
-      count--;
-      if (count === 0)
-        db.disconnect();
-    });
-  });
-});
+          console.log('Created Project:', model);
 
-db.automigrate('Project', function(err) {
-  if (err) throw err;
-
-  var projects = [
-    {
-      name: 'project-test-1'
-    },
-    {
-      name: 'project-test-2'
-    }
-  ];
-  var count = projects.length;
-  projects.forEach(function(project) {
-    app.models.Project.create(project, function(err, model) {
-      if (err) throw err;
-
-      console.log('Created Project:', model);
+          count--;
+          if (count === 0)
+            db.disconnect();
+        });
+      });
 
       count--;
       if (count === 0)
