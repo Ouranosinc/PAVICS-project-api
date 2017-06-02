@@ -10,26 +10,21 @@
     "name": {
       "type": "string",
       "required": true
+    },
+    "facets": {
+      "type": [
+        "object"
+      ],
+      "required": true
+    },
+    "datasets": {
+      "type": [
+        "object"
+      ],
+      "required": false
     }
   },
   "validations": [],
-  "relations": {
-    "facets": {
-      "type": "hasMany",
-      "model": "Facet",
-      "foreignKey": ""
-    },
-    "project": {
-      "type": "belongsTo",
-      "model": "Project",
-      "foreignKey": "projectId"
-    },
-    "datasets": {
-      "type": "hasMany",
-      "model": "Dataset",
-      "foreignKey": ""
-    }
-  },
   "acls": [],
   "methods": {}
 }

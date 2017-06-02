@@ -1,0 +1,20 @@
+{
+  "name": "Researcher",
+  "plural": "researchers",
+  "base": "User",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "projects": {
+      "type": "hasMany",
+      "model": "Project",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

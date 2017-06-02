@@ -9,7 +9,6 @@ var lbTables = [
   'Role',
   // Custom
   'Dataset',
-  'Facet',
   'Project',
   'Research',
   'Researcher',
