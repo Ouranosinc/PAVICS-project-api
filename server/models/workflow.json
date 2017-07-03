@@ -15,6 +15,17 @@
       "silenceWarnings": false
     }
   },
+  "indexes": {
+    "project_unique_constraint": {
+      "keys": {
+        "projectId": 1,
+        "name": 1
+      },
+      "options": {
+        "unique": true
+      }
+    }
+  },
   "properties": {
     "name": {
       "type": "string",

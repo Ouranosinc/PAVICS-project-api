@@ -6,6 +6,15 @@
   "options": {
     "validateUpsert": true
   },
+  "mixins": {
+    "TimeStamp": {
+      "createdAt": "createdOn",
+      "updatedAt": "updatedOn",
+      "required": false,
+      "validateUpsert": true,
+      "silenceWarnings": false
+    }
+  },
   "properties": {
     "name": {
       "type": "string",
@@ -17,7 +26,7 @@
       ],
       "required": true
     },
-    "datasets": {
+    "results": {
       "type": [
         "object"
       ],

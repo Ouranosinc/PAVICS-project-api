@@ -6,6 +6,17 @@
   "options": {
     "validateUpsert": true
   },
+  "indexes": {
+    "dataset_unique_constraint": {
+      "keys": {
+        "projectId": 1,
+        "dataset_id": 1
+      },
+      "options": {
+        "unique": true
+      }
+    }
+  },
   "properties": {
     "has_time": {
       "type": [
@@ -70,7 +81,15 @@
       "type": "string"
     },
     "_version_": {
-      "type": "number"
+      "type": "number",
+      "postgresql": {
+        "columnName": "_version_",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 32,
+        "dataScale": 0,
+        "nullable": "YES"
+      }
     },
     "variable": {
       "type": [
