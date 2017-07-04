@@ -6,6 +6,26 @@
   "options": {
     "validateUpsert": true
   },
+  "mixins": {
+    "TimeStamp": {
+      "createdAt": "createdOn",
+      "updatedAt": "updatedOn",
+      "required": false,
+      "validateUpsert": true,
+      "silenceWarnings": false
+    }
+  },
+  "indexes": {
+    "project_unique_constraint": {
+      "keys": {
+        "projectId": 1,
+        "name": 1
+      },
+      "options": {
+        "unique": true
+      }
+    }
+  },
   "properties": {
     "name": {
       "type": "string",
@@ -16,17 +36,19 @@
       "required": true
     }
   },
-  "mixins": {
-    "TimeStamp": {
-      "createdAt": "createdOn",
-      "updatedAt": "updatedOn",
-      "required": false,
-      "validateUpsert": true,
-      "silenceWarnings": false
+  "validations": [],
+  "relations": {
+    "project": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
+    },
+    "tasks": {
+      "type": "hasMany",
+      "model": "Task",
+      "foreignKey": ""
     }
   },
-  "validations": [],
-  "relations": {},
   "acls": [],
   "methods": {}
 }

@@ -1,0 +1,139 @@
+{
+  "name": "Dataset",
+  "plural": "Datasets",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "indexes": {
+    "dataset_unique_constraint": {
+      "keys": {
+        "projectId": 1,
+        "dataset_id": 1
+      },
+      "options": {
+        "unique": true
+      }
+    }
+  },
+  "properties": {
+    "has_time": {
+      "type": [
+        "string"
+      ]
+    },
+    "wms_urls": {
+      "type": [
+        "string"
+      ]
+    },
+    "cf_standard_name": {
+      "type": [
+        "string"
+      ]
+    },
+    "frequency": {
+      "type": "string"
+    },
+    "data_min": {
+      "type": [
+        "string"
+      ]
+    },
+    "keywords": {
+      "type": [
+        "string"
+      ]
+    },
+    "dataset_id": {
+      "type": "string",
+      "required": true
+    },
+    "subject": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "variable_long_name": {
+      "type": [
+        "string"
+      ]
+    },
+    "source": {
+      "type": "string"
+    },
+    "experiment": {
+      "type": "string"
+    },
+    "units": {
+      "type": [
+        "string"
+      ]
+    },
+    "opendap_urls": {
+      "type": [
+        "string"
+      ]
+    },
+    "content_type": {
+      "type": "string"
+    },
+    "_version_": {
+      "type": "number",
+      "postgresql": {
+        "columnName": "_version_",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 32,
+        "dataScale": 0,
+        "nullable": "YES"
+      }
+    },
+    "variable": {
+      "type": [
+        "string"
+      ]
+    },
+    "catalog_urls": {
+      "type": [
+        "string"
+      ]
+    },
+    "project": {
+      "type": "string"
+    },
+    "institute": {
+      "type": "string"
+    },
+    "urls": {
+      "type": [
+        "string"
+      ]
+    },
+    "model": {
+      "type": "string"
+    },
+    "data_max": {
+      "type": [
+        "string"
+      ]
+    }
+  },
+  "validations": [],
+  "relations": {
+    "project": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
+    },
+    "research": {
+      "type": "belongsTo",
+      "model": "Research",
+      "foreignKey": "researchId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

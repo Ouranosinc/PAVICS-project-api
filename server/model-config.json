@@ -43,5 +43,21 @@
   "Project": {
     "dataSource": "db",
     "public": true
+  },
+  "Research": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Dataset": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Task": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Researcher": {
+    "dataSource": "db",
+    "public": true
   }
 }

@@ -6,12 +6,6 @@
   "options": {
     "validateUpsert": true
   },
-  "properties": {
-    "name": {
-      "type": "string",
-      "required": true
-    }
-  },
   "mixins": {
     "TimeStamp": {
       "createdAt": "createdOn",
@@ -21,8 +15,46 @@
       "silenceWarnings": false
     }
   },
+  "indexes": {
+    "project_unique_constraint": {
+      "keys": {
+        "researcherId": 1,
+        "name": 1
+      },
+      "options": {
+        "unique": true
+      }
+    }
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "researchs": {
+      "type": "hasMany",
+      "model": "Research",
+      "foreignKey": ""
+    },
+    "datasets": {
+      "type": "hasMany",
+      "model": "Dataset",
+      "foreignKey": ""
+    },
+    "workflows": {
+      "type": "hasMany",
+      "model": "Workflow",
+      "foreignKey": ""
+    },
+    "researcher": {
+      "type": "belongsTo",
+      "model": "Researcher",
+      "foreignKey": "researcherId"
+    }
+  },
   "acls": [],
   "methods": {}
 }
