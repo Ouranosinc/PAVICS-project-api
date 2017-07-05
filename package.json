@@ -1,5 +1,5 @@
 {
-  "name": "PAVICS-project-management",
+  "name": "PAVICS-project-api",
   "version": "1.0.0",
   "main": "server/server.js",
   "engines": {
@@ -32,5 +32,5 @@
     "url": ""
   },
   "license": "MIT",
-  "description": "PAVICS-project-management"
+  "description": "PAVICS-project-api"
 }
