@@ -29,7 +29,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "json": {
       "type": "object",
