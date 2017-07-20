@@ -3,6 +3,17 @@
   "plural": "Workflows",
   "base": "PersistedModel",
   "idInjection": true,
+  "indexes": {
+    "project_unique_constraint": {
+      "keys": {
+        "projectId": 1,
+        "name": 1
+      },
+      "options": {
+        "unique": true
+      }
+    }
+  },
   "options": {
     "validateUpsert": true
   },
@@ -13,17 +24,6 @@
       "required": false,
       "validateUpsert": true,
       "silenceWarnings": false
-    }
-  },
-  "indexes": {
-    "project_unique_constraint": {
-      "keys": {
-        "projectId": 1,
-        "name": 1
-      },
-      "options": {
-        "unique": true
-      }
     }
   },
   "properties": {

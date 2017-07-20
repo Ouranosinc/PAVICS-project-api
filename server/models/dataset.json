@@ -3,9 +3,6 @@
   "plural": "Datasets",
   "base": "PersistedModel",
   "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
   "indexes": {
     "dataset_unique_constraint": {
       "keys": {
@@ -16,6 +13,9 @@
         "unique": true
       }
     }
+  },
+  "options": {
+    "validateUpsert": true
   },
   "properties": {
     "has_time": {
