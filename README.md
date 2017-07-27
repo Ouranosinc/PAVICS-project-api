@@ -23,6 +23,6 @@ $ slc run
 
 # Build and Launch API as docker image
 ```
-$ docker build -t pavics/project-management .
+$ docker build -t pavics/project-api .
 $ docker run -p 3005:3005 -it pavics/project-management
 ```
