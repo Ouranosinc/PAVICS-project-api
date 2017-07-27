@@ -34,6 +34,13 @@
     }
   },
   "validations": [],
+  "relations": {
+    "project": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
+    }
+  },
   "acls": [],
   "methods": {}
 }

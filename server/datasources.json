@@ -5,7 +5,7 @@
     "url": "see datasources.development.js",
     "database": "deprecated",
     "password": "deprecated",
-    "name": "deprecated",
+    "name": "db",
     "user": "deprecated",
     "connector": "deprecated"
   }

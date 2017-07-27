@@ -1,0 +1,25 @@
+{
+  "name": "Job",
+  "plural": "Jobs",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "phoenixTaskId": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "projectId": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

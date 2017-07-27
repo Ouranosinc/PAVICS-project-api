@@ -3,6 +3,17 @@
   "plural": "Projects",
   "base": "PersistedModel",
   "idInjection": true,
+  "indexes": {
+    "project_unique_constraint": {
+      "keys": {
+        "researcherId": 1,
+        "name": 1
+      },
+      "options": {
+        "unique": true
+      }
+    }
+  },
   "options": {
     "validateUpsert": true
   },
@@ -13,17 +24,6 @@
       "required": false,
       "validateUpsert": true,
       "silenceWarnings": false
-    }
-  },
-  "indexes": {
-    "project_unique_constraint": {
-      "keys": {
-        "researcherId": 1,
-        "name": 1
-      },
-      "options": {
-        "unique": true
-      }
     }
   },
   "properties": {
@@ -53,6 +53,11 @@
       "type": "belongsTo",
       "model": "Researcher",
       "foreignKey": "researcherId"
+    },
+    "jobs": {
+      "type": "hasMany",
+      "model": "Job",
+      "foreignKey": ""
     }
   },
   "acls": [],
