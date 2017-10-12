@@ -23,20 +23,18 @@
         "string"
       ]
     },
-    "wms_urls": {
-      "type": [
-        "string"
-      ]
-    },
     "cf_standard_name": {
-      "type": [
-        "string"
-      ]
-    },
-    "frequency": {
       "type": "string"
     },
-    "data_min": {
+    "abstract": {
+      "type": [
+        "string"
+      ]
+    },
+    "replica": {
+      "type": "boolean"
+    },
+    "wms_url": {
       "type": [
         "string"
       ]
@@ -50,34 +48,28 @@
       "type": "string",
       "required": true
     },
+    "datetime_max": {
+      "type": [
+        "string"
+      ]
+    },
+    "frequency": {
+      "type": "string"
+    },
+    "data_min": {
+      "type": [
+        "string"
+      ]
+    },
+    "id": {
+      "type": [
+        "string"
+      ]
+    },
     "subject": {
       "type": "string"
     },
     "category": {
-      "type": "string"
-    },
-    "variable_long_name": {
-      "type": [
-        "string"
-      ]
-    },
-    "source": {
-      "type": "string"
-    },
-    "experiment": {
-      "type": "string"
-    },
-    "units": {
-      "type": [
-        "string"
-      ]
-    },
-    "opendap_urls": {
-      "type": [
-        "string"
-      ]
-    },
-    "content_type": {
       "type": "string"
     },
     "_version_": {
@@ -91,12 +83,86 @@
         "nullable": "YES"
       }
     },
-    "variable": {
+    "opendap_url": {
       "type": [
         "string"
       ]
     },
-    "catalog_urls": {
+    "title": {
+      "type": [
+        "string"
+      ]
+    },
+    "variable_palette": {
+      "type": "string"
+    },
+    "variable_long_name": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "datetime_min": {
+      "type": [
+        "string"
+      ]
+    },
+    "experiment": {
+      "type": "string"
+    },
+    "variable_max": {
+      "type": "number",
+      "postgresql": {
+        "columnName": "variable_max",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 32,
+        "dataScale": 0,
+        "nullable": "YES"
+      }
+    },
+    "units": {
+      "type": "string"
+    },
+    "resourcename": {
+      "type": [
+        "string"
+      ]
+    },
+    "type": {
+      "type": "string"
+    },
+    "catalog_url": {
+      "type": [
+        "string"
+      ]
+    },
+    "aggregate_title": {
+      "type": "string"
+    },
+    "last_modified": {
+      "type": [
+        "string"
+      ]
+    },
+    "content_type": {
+      "type": "string"
+    },
+    "variable_min": {
+      "type": "number",
+      "postgresql": {
+        "columnName": "variable_min",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 32,
+        "dataScale": 0,
+        "nullable": "YES"
+      }
+    },
+    "variable": {
+      "type": "string"
+    },
+    "url": {
       "type": [
         "string"
       ]
@@ -107,18 +173,19 @@
     "institute": {
       "type": "string"
     },
-    "urls": {
-      "type": [
-        "string"
-      ]
+    "frequency": {
+      "type": "string"
     },
     "model": {
       "type": "string"
     },
-    "data_max": {
+    "fileserver_url": {
       "type": [
         "string"
       ]
+    },
+    "latest": {
+      "type": "boolean"
     }
   },
   "validations": [],
