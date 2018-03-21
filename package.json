@@ -8,7 +8,9 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
-    "posttest": "npm run lint && nsp check"
+    "migrate": "node bin/auto-migrate.js",
+    "posttest": "npm run lint && nsp check",
+    "verify": "node bin/is-pgsql-running.js"
   },
   "dependencies": {
     "compression": "^1.0.3",
@@ -19,6 +21,7 @@
     "loopback-component-explorer": "^4.0.0",
     "loopback-connector-postgresql": "^2.8.0",
     "loopback-ds-timestamp-mixin": "^3.4.1",
+    "pg": "^7.4.1",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^2.0.0"
   },

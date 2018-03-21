@@ -10,6 +10,6 @@ ADD package.json package.json
 RUN npm install
 ADD . .
 
-CMD ["npm","start"]
+CMD npm run verify && npm run migrate && npm start
 EXPOSE 3005
 
