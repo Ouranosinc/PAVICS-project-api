@@ -7,6 +7,7 @@ LABEL Description="PAVICS - Project Management API Based on Node.js, Loopback an
 
 ENV NODE_ENV=production
 ADD package.json package.json
+ADD package-lock.json package-lock.json
 RUN npm install
 ADD . .
 

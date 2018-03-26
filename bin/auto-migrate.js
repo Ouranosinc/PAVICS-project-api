@@ -1,9 +1,11 @@
-var path = require('path');
+'use strict';
 
-var app = require(path.resolve(__dirname, '../server/server'));
-var db = app.datasources.db;
+const path = require('path');
 
-var lbTables = [
+const app = require(path.resolve(__dirname, '../server/server'));
+const db = app.datasources.db;
+
+const lbTables = [
   // Built-in
   'User',
   'AccessToken',
@@ -29,7 +31,6 @@ db.automigrate(lbTables, function(er) {
 });
 
 function createMockData() {
-
   const users = [
     {
       email: 'demo@crim.ca',
@@ -49,32 +50,39 @@ function createMockData() {
   const projects = [{}, {}, {}];
   let count = users.length * projects.length * workflows.length;
 
-  users.forEach(function (user) {
-    app.models.Researcher.create(user, function (err, model) {
-      if (err) throw err;
+  users.forEach(function(user) {
+    app.models.Researcher.create(user, function(err, model) {
+      if (err) {
+        throw err;
+      }
       console.log('Created Researcher:', model);
 
       projects.map((project, i) => {
-        project.name = `${model.username} Project ${i+1}`;
-        project.description = `This demo project is intended to allow users to launch complex workflows, visualize climatological datasets and workflow results of any kind. Everything will be public and visible to anybody.`;
+        project.name = `${model.username} Project ${i + 1}`;
+        project.description = 'This demo project is intended to allow users to launch complex workflows, visualize climatological datasets and workflow results of any kind. Everything will be public and visible to anybody.';
         project.researcherId = model.id;
       });
 
-      projects.forEach(function (project) {
-        app.models.Project.create(project, function (err, model) {
-          if (err) throw err;
+      projects.forEach(function(project) {
+        app.models.Project.create(project, function(err, model) {
+          if (err) {
+            throw err;
+          }
 
           console.log('Created Project:', model);
           workflows.map((workflow) => workflow.projectId = model.id);
 
-          workflows.forEach(function (workflow) {
-            app.models.Workflow.create(workflow, function (err, model) {
-              if (err) throw err;
+          workflows.forEach(function(workflow) {
+            app.models.Workflow.create(workflow, function(err, model) {
+              if (err) {
+                throw err;
+              }
               console.log('Created Workflow:', model);
 
               count--;
-              if (count === 0)
+              if (count === 0) {
                 db.disconnect();
+              }
             });
           });
         });

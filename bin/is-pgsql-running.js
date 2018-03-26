@@ -13,7 +13,7 @@ async function checkConnection() {
   while (awaitingConnection) {
     try {
       const client = new Client({
-        connectionString: `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@postgres:5432/${process.env.POSTGRES_DB}`
+        connectionString: `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:5432/${process.env.POSTGRES_DB}`
       });
       client.connect()
         .then(() => {
