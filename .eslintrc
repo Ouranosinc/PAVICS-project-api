@@ -2,6 +2,10 @@
   "extends": "loopback",
   "rules": {
     "max-len": [2, { "code": 120 }],
-    "curly": "error"
+    "curly": "error",
+    "one-var": ["off"]
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017
   }
 }
