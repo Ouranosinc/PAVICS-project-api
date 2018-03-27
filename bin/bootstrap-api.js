@@ -1,10 +1,7 @@
 'use strict';
 
 const path = require('path');
-
-const app = require(path.resolve(__dirname, '../server/server'));
-const db = app.datasources.db;
-
+const {Client} = require('pg');
 const lbTables = [
   // Built-in
   'User',
@@ -21,16 +18,98 @@ const lbTables = [
   'Task',
   'Workflow',
 ];
-db.automigrate(lbTables, function(er) {
-  if (er) {
-    // throw er;
-  }
-  console.log('Auto-Migrated Following Loopback Tables [' + lbTables + '] created in ', db.adapter.name);
-  createMockData();
-  // db.disconnect();
-});
+let awaitingConnection = true;
+let db;
+let app;
+let postgresClient;
+let pavicsClient;
 
-function createMockData() {
+checkConnection();
+
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function checkConnection() {
+
+  // first we wait for postgres image to be up
+  while (awaitingConnection) {
+    try {
+      const connectionString = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:5432/postgres`;
+      postgresClient = new Client({
+        connectionString: connectionString,
+      });
+      await postgresClient.connect();
+      awaitingConnection = false;
+      console.log('postgresql is up');
+    }
+    catch (ex) {
+      console.log('postgres is not up: %s', ex.message);
+    }
+    await sleep(3000);
+  }
+
+  // if we get here postgresClient should be a valid postgres default client
+  // let's verify if the pavics database exists already
+
+  try {
+    const pavicsDbConnectionString = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:5432/${process.env.POSTGRES_DB}`;
+    pavicsClient = new Client({
+      connectionString: pavicsDbConnectionString,
+    });
+    await pavicsClient.connect();
+    console.log('pavics database already exists, we should auto update');
+    app = require(path.resolve(__dirname, '../server/server'));
+    db = app.datasources.db;
+    db.autoupdate(lbTables, function(er) {
+      if (er) {
+        // throw er;
+      }
+    });
+  } catch (ex) {
+    console.log('pavics client does not exist, we should create everything from scratch');
+    try {
+      await initializePavicsDatabase(postgresClient);
+      app = require(path.resolve(__dirname, '../server/server'));
+      db = app.datasources.db;
+      db.automigrate(lbTables, function(er) {
+        if (er) {
+          // throw er;
+        }
+        console.log('Auto-Migrated Following Loopback Tables [' + lbTables + '] created in ', db.adapter.name);
+        createMockData(db);
+        // db.disconnect();
+      });
+    } catch (ex) {
+      console.log('we could not initialize pavics database: %s', ex.message);
+    }
+  }
+
+  await postgresClient.end();
+  await pavicsClient.end();
+}
+
+const initializePavicsDatabase = (client) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      CREATE DATABASE ${process.env.POSTGRES_DB}
+      OWNER = ${process.env.POSTGRES_USER}
+      ENCODING = UTF8
+    `;
+    client.query(sql, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+
+};
+
+const createMockData = db => {
   const users = [
     {
       email: 'demo@crim.ca',
@@ -55,7 +134,6 @@ function createMockData() {
       if (err) {
         throw err;
       }
-      console.log('Created Researcher:', model);
 
       projects.map((project, i) => {
         project.name = `${model.username} Project ${i + 1}`;
@@ -69,7 +147,6 @@ function createMockData() {
             throw err;
           }
 
-          console.log('Created Project:', model);
           workflows.map((workflow) => workflow.projectId = model.id);
 
           workflows.forEach(function(workflow) {
@@ -77,7 +154,6 @@ function createMockData() {
               if (err) {
                 throw err;
               }
-              console.log('Created Workflow:', model);
 
               count--;
               if (count === 0) {
@@ -89,4 +165,4 @@ function createMockData() {
       });
     });
   });
-}
+};
