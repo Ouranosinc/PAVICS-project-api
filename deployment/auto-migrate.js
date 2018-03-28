@@ -1,9 +1,9 @@
-var path = require('path');
+let path = require('path');
+let app = require(path.resolve(__dirname, '../server/server'));
+let db = app.datasources.db;
+const MAX_RETRIES = 15;
 
-var app = require(path.resolve(__dirname, '../server/server'));
-var db = app.datasources.db;
-
-var lbTables = [
+let lbTables = [
   // Built-in
   'User',
   'AccessToken',
@@ -23,7 +23,6 @@ db.automigrate(lbTables, function(er) {
   if (er) // throw er;
   console.log('Auto-Migrated Following Loopback Tables [' + lbTables + '] created in ', db.adapter.name);
   createMockData();
-  // db.disconnect();
 });
 
 function createMockData() {
