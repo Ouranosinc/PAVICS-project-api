@@ -10,6 +10,10 @@
     "phoenixTaskId": {
       "type": "string",
       "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": false
     }
   },
   "validations": [],
