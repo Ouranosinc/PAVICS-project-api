@@ -2,11 +2,11 @@
 
 const path = require('path');
 const {Client} = require('pg');
-var createMockData = require('./create-mock-data').createMockData;
-var lbTables = require('./lb-tables').lbTables;
+let createMockData = require('./create-mock-data').createMockData;
+let lbTables = require('./lb-tables').lbTables;
+let app = require(path.resolve(__dirname, '../server/server'));
+let db = app.datasources.db;
 let awaitingConnection = true;
-let db;
-let app;
 let postgresClient;
 let pavicsClient;
 
@@ -46,26 +46,22 @@ async function checkConnection() {
       connectionString: pavicsDbConnectionString,
     });
     await pavicsClient.connect();
-    console.log('pavics database already exists, we should auto update');
-    app = require(path.resolve(__dirname, '../server/server'));
-    db = app.datasources.db;
+    console.log(`${process.env.POSTGRES_DB} database already exists, we should auto update`);
     db.autoupdate(lbTables, function(er) {
       if (er) {
         // throw er;
       }
     });
   } catch (ex) {
-    console.log('pavics client does not exist, we should create everything from scratch');
+    console.log(`${process.env.POSTGRES_DB} database does not exist, we should create everything from scratch`);
     try {
       await initializePavicsDatabase(postgresClient);
-      var app = require(path.resolve(__dirname, '../server/server'));
-      db = app.datasources.db;
       db.automigrate(lbTables, function(er) {
         if (er) {
           // throw er;
         }
         console.log('Auto-Migrated Following Loopback Tables [' + lbTables + '] created in ', db.adapter.name);
-        createMockData(app, db);
+        createMockData();
         // db.disconnect();
       });
     } catch (ex) {
