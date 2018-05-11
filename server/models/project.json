@@ -3,17 +3,6 @@
   "plural": "Projects",
   "base": "PersistedModel",
   "idInjection": true,
-  "indexes": {
-    "project_unique_constraint": {
-      "keys": {
-        "researcherId": 1,
-        "name": 1
-      },
-      "options": {
-        "unique": true
-      }
-    }
-  },
   "options": {
     "validateUpsert": true
   },
