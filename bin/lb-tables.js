@@ -10,7 +10,6 @@ var lbTables = [
   'Job',
   'Project',
   'Research',
-  'Researcher',
   'Task',
   'Workflow',
 ];

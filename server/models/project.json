@@ -20,7 +20,15 @@
       "type": "string",
       "required": true
     },
+    "owner": {
+      "type": "string",
+      "required": true
+    },
     "description": {
+      "type": "string",
+      "required": false
+    },
+    "magpieId": {
       "type": "string",
       "required": false
     }
@@ -41,11 +49,6 @@
       "type": "hasMany",
       "model": "Workflow",
       "foreignKey": ""
-    },
-    "researcher": {
-      "type": "belongsTo",
-      "model": "Researcher",
-      "foreignKey": "researcherId"
     },
     "jobs": {
       "type": "hasMany",

@@ -8,5 +8,11 @@
     "name": "db",
     "user": "deprecated",
     "connector": "deprecated"
+  },
+  "magpie": {
+    "name": "magpie",
+    "baseURL": "https://hirondelle.crim.ca/magpie",
+    "crud": true,
+    "connector": "rest"
   }
 }
