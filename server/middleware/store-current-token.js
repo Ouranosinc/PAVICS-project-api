@@ -10,6 +10,8 @@ module.exports = function(options) {
     var loopbackContext = LoopBackContext.getCurrentContext();
     loopbackContext.set('currentToken', (req.cookies.auth_tkt)?`auth_tkt=${req.cookies.auth_tkt}`: null);
 
+    console.log(`middleware store-current-token saved token in loopback context.`);
+
     next();
   };
 };

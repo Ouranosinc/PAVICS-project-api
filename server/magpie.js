@@ -34,13 +34,16 @@ module.exports = {
       console.log(`Token used: ${token}`);
       request.get({
         url: url,
-        /*headers: {
+        headers: {
           'Cookie': token
-        },*/
+        },
         resolveWithFullResponse: true
       })
       .then((response) => {
-        resolve(response);
+        console.log(response.body);
+        let resource = JSON.parse(response.body)[serviceName].resources;
+        let resources = Object.keys(resource).map(p => resource[p]);
+        resolve(resources);
       })
       .catch((error) => {
         reject(error);
@@ -48,7 +51,56 @@ module.exports = {
     })
   },
   addResourcePermission: (resourceId, user, permission) => {
-    // TODO
+    return new Promise((resolve, reject) => {
+      let url = `${process.env.MAGPIE_BASE_URL}/users/${user}/resources/${resourceId}/permissions`;
+      console.log(`Creating permission ${permission} in magpie at url ${url}`);
+      request.post({
+        url: url,
+        body: {
+          "permission_name": permission
+        },
+        json: true,
+        headers: {
+          'Cookie': AUTH_TOKEN_COOKIE
+        },
+        resolveWithFullResponse: true
+      })
+        .then((response) => {
+          //console.log(response.body);
+          //resolve(JSON.parse(response.body));
+          resolve(response.body);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  },
+  tempRegisterResource: (resourceName, resourceType = 'file', parentId = 148) => {
+    // This method needs the admin privileges to be executed with success
+    // TODO: Eventually switch to the other method
+    return new Promise((resolve, reject) => {
+      let url = `${process.env.MAGPIE_BASE_URL}/resources`;
+      console.log(`Registering a new resource with name ${resourceName} in magpie at url ${url}`);
+      request.post({
+        url: url,
+        form: {
+          "resource_name": resourceName,
+          "resource_type": resourceType,
+          "parent_id": parentId
+        },
+        headers: {
+          'Content-Type' : 'application/x-www-form-urlencoded',
+          'Cookie': AUTH_TOKEN_COOKIE
+        },
+        resolveWithFullResponse: true
+      })
+        .then((response) => {
+          resolve(JSON.parse(response.body));
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
   },
   registerResource: (resourceName, resourceType = 'file', serviceName = 'project-api') => {
     // This method needs the admin privileges to be executed with success
@@ -67,7 +119,7 @@ module.exports = {
         resolveWithFullResponse: true
       })
       .then((response) => {
-        resolve(response);
+        resolve(JSON.parse(response.body));
       })
       .catch((error) => {
         reject(error);
