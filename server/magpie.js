@@ -27,6 +27,48 @@ module.exports = {
         });
     })
   },
+  session: (token) => {
+    return new Promise((resolve, reject) => {
+      let url = `${process.env.MAGPIE_BASE_URL}/session`;
+      console.log(`Fetching session from magpie at url ${url}`);
+      request.get({
+        url: url,
+        headers: {
+          'Cookie': token
+        },
+        resolveWithFullResponse: true
+      })
+        .then((response) => {
+          resolve(JSON.parse(response.body));
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  },
+  getUserResources: (user, serviceName = 'project-api') => {
+    return new Promise((resolve, reject) => {
+      let url = `${process.env.MAGPIE_BASE_URL}/users/${user}/resources`;
+      console.log(`Fetching resources for user ${user} and service ${serviceName} from magpie at url ${url}`);
+      request.get({
+        url: url,
+        headers: {
+          'Cookie': AUTH_TOKEN_COOKIE
+        },
+        resolveWithFullResponse: true
+      })
+        .then((response) => {
+          // console.log(response.body);
+          let resources = JSON.parse(response.body)["resources"][serviceName][serviceName]["resources"];
+          let sanitizedResources = Object.keys(resources).map(p => resources[p]);
+          resolve(sanitizedResources);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  },
+  // deprecated for now, such route only support admin token
   getResources: (token = AUTH_TOKEN_COOKIE, serviceName = 'project-api') => {
     return new Promise((resolve, reject) => {
       let url = `${process.env.MAGPIE_BASE_URL}/services/${serviceName}/resources`;

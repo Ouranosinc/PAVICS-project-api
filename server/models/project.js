@@ -31,10 +31,11 @@ module.exports = function(Project) {
     if(userToken && userToken.length) {
       console.log('There\'s a token in the request');
       try {
-        let resources = await magpie.getResources(userToken);
-        console.log(resources);
+        let user = await magpie.session(userToken);
+        let resources = await magpie.getUserResources(user.user_name);
+        // console.log(resources);
         let magpieIds = resources.map(x => x.resource_id);
-        console.log(magpieIds);
+        // console.log(magpieIds);
         let result = await Project.find({
           where: {
             magpieId: {
@@ -42,7 +43,7 @@ module.exports = function(Project) {
             }
           }
         });
-        console.log(result);
+        // console.log(result);
         return Promise.resolve(result);
       }catch(error) {
         return Promise.reject(error);
