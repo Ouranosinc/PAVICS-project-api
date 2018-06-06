@@ -11,7 +11,7 @@ module.exports = {
   },
   "magpie": {
     "name": "magpie",
-    "baseURL": process.env.MAGPIE_BASE_URL,
+    "baseURL": process.env.MAGPIE_HOST,
     "crud": true,
     "connector": "rest"
   }

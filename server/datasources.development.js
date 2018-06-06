@@ -11,7 +11,7 @@ module.exports = {
   },
   "magpie": {
     "name": "magpie",
-    "baseURL": process.env.MAGPIE_BASE_URL,
+    "baseURL": process.env.MAGPIE_HOST,
     "crud": false,
     "connector": "rest",
     "options": {
@@ -25,7 +25,7 @@ module.exports = {
       /*{
         "template": {
           "method": "GET",
-          "url": `${process.env.MAGPIE_BASE_URL}/services/{service_name=projects/resources`
+          "url": `${process.env.MAGPIE_HOST}/services/{service_name=projects/resources`
         },
         "options": {
           "headers": {
@@ -39,7 +39,7 @@ module.exports = {
       /*{
         "template": {
           "method": "POST",
-          "url": `${process.env.MAGPIE_BASE_URL}/services/{service_name=projects}/resources`,
+          "url": `${process.env.MAGPIE_HOST}/services/{service_name=projects}/resources`,
           "body": {
             "resource_name": "{resource_name}",
             "resource_type": "{resource_type}"
@@ -52,7 +52,7 @@ module.exports = {
       /*{
         "template": {
           "method": "DELETE",
-          "url": `${process.env.MAGPIE_BASE_URL}/resources/{resource_id}`
+          "url": `${process.env.MAGPIE_HOST}/resources/{resource_id}`
         },
         "functions": {
           "deleteResource": ["resource_id"]

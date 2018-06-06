@@ -16,10 +16,15 @@ $ docker run -p 5432:5432 --name postgres -e POSTGRES_USER=<POSTGRES_USER> -e PO
 ## Install dependencies and set needed environment variables
 ```
 $ npm install
+$ export BIRDHOUSE_HOST=outarde.crim.ca
+$ export MAGPIE_HOST=https://outarde.crim.ca/magpie
+$ export MAGPIE_PROJECT_SERVICE_TYPE=project-api
+$ export MAGPIE_PROJECT_USER=<MAGPIE_ADMIN_USER>
+$ export MAGPIE_PROJECT_PASSWORD=<MAGPIE_ADMIN_PASSWORD>
 $ export POSTGRES_HOST=<LOCAL_IP>
-$ export POSTGRES_DB=<POSTGRES_DB>,
-$ export POSTGRES_PASSWORD=<POSTGRES_PASSWORD>,
-$ export POSTGRES_USER=<POSTGRES_USER>,
+$ export POSTGRES_DB=<POSTGRES_DB>
+$ export POSTGRES_PASSWORD=<POSTGRES_PASSWORD>
+$ export POSTGRES_USER=<POSTGRES_USER>
 ```
 
 ## Launch API

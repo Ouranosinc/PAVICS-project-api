@@ -6,7 +6,7 @@ module.exports = {
   signin: () => {
     return new Promise((resolve, reject) => {
       let j = request.jar();
-      let url = `${process.env.MAGPIE_BASE_URL}/signin`;
+      let url = `${process.env.MAGPIE_HOST}/signin`;
       console.log(`Signing in to magpie at url ${url}`)
       request.post({
         url: url,
@@ -29,7 +29,7 @@ module.exports = {
   },
   session: (token) => {
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_BASE_URL}/session`;
+      let url = `${process.env.MAGPIE_HOST}/session`;
       console.log(`Fetching session from magpie at url ${url}`);
       request.get({
         url: url,
@@ -48,7 +48,7 @@ module.exports = {
   },
   getUserResources: (user, serviceName = 'project-api') => {
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_BASE_URL}/users/${user}/resources`;
+      let url = `${process.env.MAGPIE_HOST}/users/${user}/resources`;
       console.log(`Fetching resources for user ${user} and service ${serviceName} from magpie at url ${url}`);
       request.get({
         url: url,
@@ -69,11 +69,11 @@ module.exports = {
     })
   },
   // deprecated for now, such route only support admin token
-  getResources: (token = AUTH_TOKEN_COOKIE, serviceName = 'project-api') => {
+  getResources: (token = AUTH_TOKEN_COOKIE, serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_BASE_URL}/services/${serviceName}/resources`;
+      let url = `${process.env.MAGPIE_HOST}/services/${serviceName}/resources`;
       console.log(`Fetching resources for service ${serviceName} from magpie at url ${url}`);
-      console.log(`Token used: ${token}`);
+      // console.log(`Token used: ${token}`);
       request.get({
         url: url,
         headers: {
@@ -94,7 +94,7 @@ module.exports = {
   },
   addResourcePermission: (resourceId, user, permission) => {
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_BASE_URL}/users/${user}/resources/${resourceId}/permissions`;
+      let url = `${process.env.MAGPIE_HOST}/users/${user}/resources/${resourceId}/permissions`;
       console.log(`Creating permission ${permission} in magpie at url ${url}`);
       request.post({
         url: url,
@@ -121,7 +121,7 @@ module.exports = {
     // This method needs the admin privileges to be executed with success
     // TODO: Eventually switch to the other method
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_BASE_URL}/resources`;
+      let url = `${process.env.MAGPIE_HOST}/resources`;
       console.log(`Registering a new resource with name ${resourceName} in magpie at url ${url}`);
       request.post({
         url: url,
@@ -144,10 +144,10 @@ module.exports = {
         });
     })
   },
-  registerResource: (resourceName, resourceType = 'file', serviceName = 'project-api') => {
+  registerResource: (resourceName, resourceType = 'file', serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
     // This method needs the admin privileges to be executed with success
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_BASE_URL}/services/${serviceName}/resources`;
+      let url = `${process.env.MAGPIE_HOST}/services/${serviceName}/resources`;
       console.log(`Registering a new resource in magpie at url ${url}`);
       request.post({
         url: url,
@@ -171,7 +171,7 @@ module.exports = {
   deleteResource: (resourceId) => {
     // This method needs the admin privileges to be executed with success
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_BASE_URL}/resources/${resourceId}`;
+      let url = `${process.env.MAGPIE_HOST}/resources/${resourceId}`;
       console.log(`Deleteting a resource in magpie at url ${url}`);
       request.delete({
         url: url,
@@ -188,10 +188,10 @@ module.exports = {
         });
     })
   },
-  isLogged: () => {
+  isAdminLogged: () => {
     return AUTH_TOKEN_COOKIE.length > 0;
   },
-  getToken: () => {
+  getAdminToken: () => {
     return AUTH_TOKEN_COOKIE
   }
 };
