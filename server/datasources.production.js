@@ -8,11 +8,5 @@ module.exports = {
     "name": "db",
     "user": process.env.POSTGRES_USER || "pavics",
     "connector": "postgresql"
-  },
-  "magpie": {
-    "name": "magpie",
-    "baseURL": process.env.MAGPIE_HOST,
-    "crud": true,
-    "connector": "rest"
   }
 };
