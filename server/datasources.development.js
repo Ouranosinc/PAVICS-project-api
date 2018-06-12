@@ -8,7 +8,7 @@ module.exports = {
     "name": "db",
     "user": process.env.POSTGRES_USER || "pavics",
     "connector": "postgresql"
-  },
+  }/*,
   "magpie": {
     "name": "magpie",
     "baseURL": process.env.MAGPIE_HOST,
@@ -22,7 +22,7 @@ module.exports = {
       "strictSSL": true
     },
     "operations": [
-      /*{
+      {
         "template": {
           "method": "GET",
           "url": `${process.env.MAGPIE_HOST}/services/{service_name=projects/resources`
@@ -57,7 +57,7 @@ module.exports = {
         "functions": {
           "deleteResource": ["resource_id"]
         }
-      }*/
+      }
     ]
-  }
+  }*/
 };
