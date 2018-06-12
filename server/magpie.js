@@ -12,13 +12,14 @@ module.exports = {
         url: url,
         resolveWithFullResponse: true,
         formData: {
-          user_name: "david",
-          password: "david",
-          provider_name: "ziggurat"
+          user_name: process.env.MAGPIE_ADMIN_USER,
+          password: process.env.MAGPIE_ADMIN_PASSWORD
         },
-        jar: j
+        jar: j,
+        json: true
       })
         .then((response) => {
+          console.log(response.body);
           AUTH_TOKEN_COOKIE = j.getCookieString(url);
           resolve(AUTH_TOKEN_COOKIE);
         })
@@ -36,31 +37,101 @@ module.exports = {
         headers: {
           'Cookie': token
         },
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        json: true
       })
         .then((response) => {
-          resolve(JSON.parse(response.body));
+          console.log(response.body);
+          resolve(response.body);
         })
         .catch((error) => {
           reject(error);
         });
     })
   },
-  getUserResources: (user, serviceName = 'project-api') => {
+  // Not working ATM
+  getCurrentResourcePermission: ((token, resourceId) => {
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_HOST}/users/${user}/resources`;
+      let url = `${process.env.MAGPIE_HOST}/users/current/resources/${resourceId}/permissions`;
+      console.log(`Fetching permissions of current user for resource ${resourceId} from magpie at url ${url}`);
+      request.get({
+        url: url,
+        headers: {
+          'Cookie': token
+        },
+        resolveWithFullResponse: true,
+        json: true
+      })
+        .then((response) => {
+          console.log(response.body);
+          resolve(response.body['permission_names']);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  }),
+  getCurrentUserGroups: ((token) => {
+    return new Promise((resolve, reject) => {
+      let url = `${process.env.MAGPIE_HOST}/users/current/groups`;
+      console.log(`Fetching groups of current user from magpie at url ${url}`);
+      request.get({
+        url: url,
+        headers: {
+          'Cookie': token
+        },
+        resolveWithFullResponse: true,
+        json: true
+      })
+        .then((response) => {
+          console.log(response.body);
+          resolve(response.body['group_names']);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  }),
+  getGroupUsers: (group) => {
+    return new Promise((resolve, reject) => {
+      let url = `${process.env.MAGPIE_HOST}/groups/${group}/users`;
+      console.log(`Fetching users of group ${group} from magpie at url ${url}`);
+      request.get({
+        url: url,
+        headers: {
+          'Cookie': AUTH_TOKEN_COOKIE
+        },
+        resolveWithFullResponse: true,
+        json: true
+      })
+        .then((response) => {
+          console.log(response.body);
+          resolve(response.body['user_names']);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  },
+  getUserResources: (user, serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
+    return new Promise((resolve, reject) => {
+      let url = `${process.env.MAGPIE_HOST}/users/${user}/inherited_resources`;
       console.log(`Fetching resources for user ${user} and service ${serviceName} from magpie at url ${url}`);
       request.get({
         url: url,
         headers: {
           'Cookie': AUTH_TOKEN_COOKIE
         },
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        json: true
       })
         .then((response) => {
-          // console.log(response.body);
-          let resources = JSON.parse(response.body)["resources"][serviceName][serviceName]["resources"];
-          let sanitizedResources = Object.keys(resources).map(p => resources[p]);
+          console.log(response.body);
+          let sanitizedResources = [];
+          if(response.body["resources"][serviceName]) {
+            let resources = response.body["resources"][serviceName][serviceName]["resources"];
+            sanitizedResources = Object.keys(resources).map(p => resources[p]);
+          }
           resolve(sanitizedResources);
         })
         .catch((error) => {
@@ -71,7 +142,7 @@ module.exports = {
   // deprecated for now, such route only support admin token
   getResources: (token = AUTH_TOKEN_COOKIE, serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
     return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_HOST}/services/${serviceName}/resources`;
+      let url = `${process.env.MAGPIE_HOST}/services/${serviceName}/inherited_resources`;
       console.log(`Fetching resources for service ${serviceName} from magpie at url ${url}`);
       // console.log(`Token used: ${token}`);
       request.get({
@@ -79,12 +150,16 @@ module.exports = {
         headers: {
           'Cookie': token
         },
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        json: true
       })
       .then((response) => {
         console.log(response.body);
-        let resource = JSON.parse(response.body)[serviceName].resources;
-        let resources = Object.keys(resource).map(p => resource[p]);
+        let resources = [];
+        if(response.body[serviceName]) {
+          let resource = response.body[serviceName].resources;
+          resources = Object.keys(resource).map(p => resource[p]);
+        }
         resolve(resources);
       })
       .catch((error) => {
@@ -103,41 +178,14 @@ module.exports = {
         },
         json: true,
         headers: {
-          'Cookie': AUTH_TOKEN_COOKIE
+          'Cookie': AUTH_TOKEN_COOKIE,
+          'Content-Type' : 'application/json',
         },
         resolveWithFullResponse: true
       })
         .then((response) => {
-          //console.log(response.body);
-          //resolve(JSON.parse(response.body));
+          console.log(response.body);
           resolve(response.body);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    })
-  },
-  tempRegisterResource: (resourceName, resourceType = 'file', parentId = 148) => {
-    // This method needs the admin privileges to be executed with success
-    // TODO: Eventually switch to the other method
-    return new Promise((resolve, reject) => {
-      let url = `${process.env.MAGPIE_HOST}/resources`;
-      console.log(`Registering a new resource with name ${resourceName} in magpie at url ${url}`);
-      request.post({
-        url: url,
-        form: {
-          "resource_name": resourceName,
-          "resource_type": resourceType,
-          "parent_id": parentId
-        },
-        headers: {
-          'Content-Type' : 'application/x-www-form-urlencoded',
-          'Cookie': AUTH_TOKEN_COOKIE
-        },
-        resolveWithFullResponse: true
-      })
-        .then((response) => {
-          resolve(JSON.parse(response.body));
         })
         .catch((error) => {
           reject(error);
@@ -156,12 +204,15 @@ module.exports = {
           "resource_type": resourceType
         },
         headers: {
+          'Content-Type' : 'application/json',
           'Cookie': AUTH_TOKEN_COOKIE
         },
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        json: true
       })
       .then((response) => {
-        resolve(JSON.parse(response.body));
+        console.log(response.body);
+        resolve(response.body);
       })
       .catch((error) => {
         reject(error);
@@ -173,15 +224,20 @@ module.exports = {
     return new Promise((resolve, reject) => {
       let url = `${process.env.MAGPIE_HOST}/resources/${resourceId}`;
       console.log(`Deleteting a resource in magpie at url ${url}`);
-      request.delete({
+      request.del({
         url: url,
+        method: 'DELETE',
+        body: {},
         headers: {
-          'Cookie': AUTH_TOKEN_COOKIE
+          'Cookie': AUTH_TOKEN_COOKIE,
+          'Content-type': 'application/json'
         },
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        json: true
       })
         .then((response) => {
-          resolve(response);
+          console.log(response.body);
+          resolve(response.body);
         })
         .catch((error) => {
           reject(error);

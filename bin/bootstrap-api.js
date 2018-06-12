@@ -61,7 +61,8 @@ async function checkConnection() {
           // throw er;
         }
         console.log('Auto-Migrated Following Loopback Tables [' + lbTables + '] created in ', db.adapter.name);
-        createMockData();
+        // There's no need to create mock data anymore since user management is now entirely delegated to magpie
+        // createMockData();
         // db.disconnect();
       });
     } catch (ex) {

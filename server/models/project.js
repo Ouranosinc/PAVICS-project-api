@@ -8,22 +8,106 @@ const searchSubsetWorkflow = require('../data/search_subset');
 const searchSubsetComputeWorkflow = require('../data/search_subset_compute');
 
 module.exports = function(Project) {
-  // TODO: Should be behind Twitcher (who validate token and permissions)
-  Project.share = (projectId, user,  cb) => {
-    // TODO: Validate current token is the project owner or not since endpoint should be behind Twitcher project WRITE permission
-    // TODO: Add "read" permission to the resource
-    // TODO: Add "write" permission
-    console.log(user);
-    cb(null, projectId);
+
+  // Should be behind Twitcher (who validates token and permissions)
+  Project.shareToUser = async (projectId, user, readPermission, writePermission) => {
+    const project = await Project.findOne({where: {id: projectId}});
+    if(project) {
+      // Two try/catch since first could fail with "409/500 (Conflicts)"  while we still want to try to process the other
+      try {
+        if (readPermission) {
+          await magpie.addResourcePermission(project.magpieId, user, 'read');
+        }
+      }catch(error) {
+        console.error(error);
+        // Promise.reject(error);
+      }
+      try {
+        if (writePermission) {
+          await magpie.addResourcePermission(project.magpieId, user, 'write');
+        }
+      }catch(error) {
+        console.error(error);
+        // Promise.reject(error);
+      }
+    }else {
+      console.log(`Project with id ${projectId} could not be found, no attempt to add permission in magpie was made`)
+    }
+
+    // Designed to always return 200 even if the user name doesn't exists
+    Promise.resolve(projectId)
   };
 
-  Project.remoteMethod('share', {
+  Project.remoteMethod('shareToUser', {
     accepts: [
-      {arg: 'projectId', type: 'string', required: true},
-      {arg: 'user', type: 'string', required: true}
+      {arg: 'id', type: 'number', required: true},
+      {arg: 'user', type: 'string', required: true},
+      {arg: 'readPermission', type: 'boolean', required: true},
+      {arg: 'writePermission', type: 'boolean', required: true}
     ],
     returns: {arg: 'id', type: 'string'},
-    http: {path: '/share', verb: 'post'}
+    http: {path: '/:id/shareToUser', verb: 'post'}
+  });
+
+  // Should be behind Twitcher (who validates token and permissions)
+  // Designed to always return 200 even if the group name doesn't exists
+  Project.shareToGroup = async (projectId, group, readPermission, writePermission, cb) => {
+    let project, users;
+    try {
+      const lbContext = LoopBackContext.getCurrentContext();
+      const userToken = lbContext.get('currentToken');
+      const currentUserGroups = await magpie.getCurrentUserGroups(userToken);
+      if(currentUserGroups.includes(group)) {
+
+      }
+      // TODO: validate token to make sure user is part of specified group
+      users = await magpie.getGroupUsers(group);
+      console.log(users);
+      project = await Project.findOne({where: {id: projectId}});
+    }catch(error) {
+      console.error(error);
+    }
+
+    if(users && project) {
+      // Using synchronous for loop to use async/await
+      for(let user of users) {
+        // Two try/catch since first could fail with "409/500 (Conflicts)" while we still want to try to process the other
+        try {
+          if (readPermission) {
+            await magpie.addResourcePermission(project.magpieId, user, 'read');
+          }
+        }catch(error) {
+          console.error(error);
+        }
+        try {
+          if (writePermission) {
+            await magpie.addResourcePermission(project.magpieId, user, 'write');
+          }
+        }catch(error) {
+          console.error(error);
+        }
+      }
+    }
+
+    // Designed to always return 200 even if the user name doesn't exists
+    Promise.resolve(projectId)
+  };
+
+  Project.remoteMethod('shareToGroup', {
+    accepts: [
+      {arg: 'id', type: 'number', required: true},
+      {arg: 'group', type: 'string', required: true},
+      {arg: 'readPermission', type: 'boolean', required: true},
+      {arg: 'writePermission', type: 'boolean', required: true}
+    ],
+    returns: {arg: 'id', type: 'string'},
+    http: {path: '/:id/shareToGroup', verb: 'post'}
+  });
+
+  Project.observe('access', function logQuery(ctx, next) {
+    // TODO add permissions array to the project(s)
+    console.log('Accessing %s matching %o', ctx.Model.modelName, ctx.query.where);
+    next();
   });
 
   // ** This method is publicly exposed **
@@ -49,14 +133,15 @@ module.exports = function(Project) {
         // console.log(magpieIds);
 
         // Fetch all projects that match one of magpieIds elements, then return the result
-        let result = await Project.find({
+        let projects = await Project.find({
           where: {
             magpieId: {
               inq: magpieIds
             }
           }
         });
-        return Promise.resolve(result);
+        projects.map(p => p.permissions = resources.find(r => r.resource_id === p.magpieId).permission_names.sort());
+        return Promise.resolve(projects);
       }catch(error) {
         return Promise.reject(error);
       }
@@ -77,13 +162,14 @@ module.exports = function(Project) {
 
   // TODO: Should be behind Twitcher (who validate token and permissions)
   Project.observe('after save', async (ctx) => {
-    console.log('After saving a project hook');
+    // console.log('After saving a project hook');
 
     if (ctx.instance) {
       // use ctx.instance
-      console.log('After creating a project hook');
+      // console.log('After creating/editing a project hook');
 
       if(!ctx.instance.magpieId) {
+        // console.log('After creating a project hook (magpieId undefined');
         try {
           let sampleWorkflows = [
             {
@@ -109,18 +195,21 @@ module.exports = function(Project) {
           ];
 
           // Create sample workflows
+          console.log('Creating sample workflows');
           await app.models.Workflow.create(sampleWorkflows[0]);
           await app.models.Workflow.create(sampleWorkflows[1]);
           await app.models.Workflow.create(sampleWorkflows[2]);
           await app.models.Workflow.create(sampleWorkflows[3]);
 
           // Register new resource and owner resource permissions in magpie
-          const resource = await magpie.tempRegisterResource(ctx.instance.id);
+          const resource = await magpie.registerResource(ctx.instance.id);
+          console.log(resource);
           await magpie.addResourcePermission(resource.resource_id, ctx.instance.owner, 'read');
           await magpie.addResourcePermission(resource.resource_id, ctx.instance.owner, 'write');
 
           // Update magpie resource id in project database
           await ctx.instance.updateAttribute('magpieId', resource.resource_id);
+
           return Promise.resolve();
         } catch (error) {
           return Promise.reject(error);
@@ -150,6 +239,7 @@ module.exports = function(Project) {
       console.log(`Project with id ${ctx.where.id} is about to be deleted`);
       try {
         const project = await Project.findOne({where: {id: ctx.where.id}});
+        console.log(project);
         await magpie.deleteResource(project.magpieId);
         return Promise.resolve();
       } catch(error) {
