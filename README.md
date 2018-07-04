@@ -8,6 +8,42 @@ This is intended to be deployed through the general docker-compose file of the p
 
 As such, when this docker image is launched, we can't be sure of either postgres being up, or that the database exists, or even if it contains the correct scheme for the current api.
 
+## Launch PostgreSQL docker image
+```
+$ docker run -p 5432:5432 --name postgres -e POSTGRES_USER=<POSTGRES_USER> -e POSTGRES_DB=<POSTGRES_DB> -e POSTGRES_PASSWORD=<POSTGRES_PASSWORD> -d postgres
+```
+
+## Install dependencies and set needed environment variables
+```
+$ npm install
+$ export BIRDHOUSE_HOST=outarde.crim.ca
+$ export MAGPIE_HOST=https://outarde.crim.ca/magpie
+$ export MAGPIE_PROJECT_SERVICE_TYPE=project-api
+$ export MAGPIE_PROJECT_USER=<MAGPIE_ADMIN_USER>
+$ export MAGPIE_PROJECT_PASSWORD=<MAGPIE_ADMIN_PASSWORD>
+$ export POSTGRES_HOST=<LOCAL_IP>
+$ export POSTGRES_DB=<POSTGRES_DB>
+$ export POSTGRES_PASSWORD=<POSTGRES_PASSWORD>
+$ export POSTGRES_USER=<POSTGRES_USER>
+```
+
+## Launch API
+```
+$ npm start
+```
+
+## In development, use Loopback CLI to create templates
+```
+$ npm install loopback-cli -g
+$ lb realation # Create a la relation, more examples here https://github.com/strongloop/loopback-cli
+```
+
+## Build and Launch API as docker image
+```
+$ docker build -t pavics/project-api .
+$ docker run -p 3005:3005 -it pavics/project-api
+```
+
 ### Getting the image up
 
 We need to verify that postgres is up before launching the api. The is-pgsql-running script will freeze the node process and loop forever, trying to connect to the "postgres" default database. **We must make sure that this default database is created with the image, or that will freeze the api forever.** When that is done, the auto migration script will try to connect to the pavics database (at this point, we assume postgres is up).
@@ -21,35 +57,11 @@ We need to verify that postgres is up before launching the api. The is-pgsql-run
 - else "pavics" database is found
   - run the auto-update functions of loopback to make sure the scheme is up to date with current model definitions
 
-## Launch PostgreSQL docker image
-```
-$ docker run -p 5432:5432 --name postgres -e POSTGRES_USER=pavics -e POSTGRES_DB=pavics -e POSTGRES_PASSWORD=qwerty -d postgres
-$ export POSTGRES_HOST=1.1.1.1
-```
+## Directly create Postgres Tables and mock data if needed
 
-You actually have to enter a valid ip/domain here, the one on which you presently are deploying.
-
-## Install dependencies
-```
-$ npm install strongloop loopback-cli -g
-$ npm install
-```
-
-## Create Postgres Tables and mock data
-
-Make sure you actually ran the docker command before, the database must be running to accept this script.
+Make sure that postgres is running and environment variables are set
 
 ```
-$ node bin/auto-migrate.js
+$ node bin/auto-migrate-db.js
 ```
 
-## Launch API
-```
-$ npm start
-```
-
-## Build and Launch API as docker image
-```
-$ docker build -t pavics/project-api .
-$ docker run -p 3005:3005 -it pavics/project-management
-```

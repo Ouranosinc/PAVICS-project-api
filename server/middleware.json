@@ -3,6 +3,11 @@
     "loopback#favicon": {}
   },
   "initial": {
+    "loopback-context#per-request": {
+      "params": {
+        "enableHttpContext": true
+      }
+    },
     "compression": {},
     "cors": {
       "params": {
@@ -30,8 +35,12 @@
       "enabled": false
     }
   },
-  "session": {},
-  "auth": {},
+  "session:before": {
+    "cookie-parser": { "params": "test secret" }
+  },
+  "auth:after": {
+    "./middleware/store-current-token": {}
+  },
   "parse": {},
   "routes": {
     "loopback#rest": {
