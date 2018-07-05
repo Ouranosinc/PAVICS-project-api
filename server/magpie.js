@@ -201,7 +201,7 @@ module.exports = {
     // This method needs the admin privileges to be executed with success
     return new Promise((resolve, reject) => {
       let url = `${process.env.MAGPIE_HOST}/services/${serviceName}/resources`;
-      console.log(`Registering a new resource in magpie at url ${url}`);F
+      console.log(`Registering a new resource in magpie at url ${url}`);
       request.post({
         url: url,
         body: {
