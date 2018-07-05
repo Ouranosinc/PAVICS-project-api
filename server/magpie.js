@@ -7,16 +7,21 @@ module.exports = {
     return new Promise((resolve, reject) => {
       let j = request.jar();
       let url = `${process.env.MAGPIE_HOST}/signin`;
+      const body = {
+        user_name: process.env.MAGPIE_PROJECT_USER,
+        password: process.env.MAGPIE_PROJECT_PASSWORD,
+        provider_name: 'ziggurat'
+      };
       console.log(`Signing in to magpie at url ${url}`)
       request.post({
         url: url,
         resolveWithFullResponse: true,
-        formData: {
-          user_name: process.env.MAGPIE_ADMIN_USER,
-          password: process.env.MAGPIE_ADMIN_PASSWORD
+        body: body,
+        json: true,
+        headers: {
+          'Content-Type' : 'application/json',
         },
         jar: j,
-        json: true
       })
         .then((response) => {
           console.log(response.body);
@@ -192,7 +197,7 @@ module.exports = {
         });
     })
   },
-  registerResource: (resourceName, resourceType = 'file', serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
+  registerResource: (resourceName, resourceType = 'route', serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
     // This method needs the admin privileges to be executed with success
     return new Promise((resolve, reject) => {
       let url = `${process.env.MAGPIE_HOST}/services/${serviceName}/resources`;
