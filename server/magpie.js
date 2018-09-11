@@ -47,7 +47,7 @@ module.exports = {
       })
         .then((response) => {
           console.log(response.body);
-          resolve(response.body);
+          resolve(response.body['user']);
         })
         .catch((error) => {
           reject(error);
@@ -137,6 +137,7 @@ module.exports = {
             let resources = response.body["resources"][serviceName][serviceName]["resources"];
             sanitizedResources = Object.keys(resources).map(p => resources[p]);
           }
+          console.log('sanitizedResources %o', sanitizedResources);
           resolve(sanitizedResources);
         })
         .catch((error) => {
@@ -217,7 +218,7 @@ module.exports = {
       })
       .then((response) => {
         console.log(response.body);
-        resolve(response.body);
+        resolve(response.body['resource']);
       })
       .catch((error) => {
         reject(error);
