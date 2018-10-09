@@ -118,7 +118,9 @@ module.exports = {
         });
     })
   },
-  getUserResources: (user, serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
+  getUserResources: (user,
+                     serviceName = process.env.MAGPIE_PROJECT_SERVICE_NAME,
+                     serviceType = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
     return new Promise((resolve, reject) => {
       let url = `${process.env.MAGPIE_HOST}/users/${user}/inherited_resources`;
       console.log(`Fetching resources for user ${user} and service ${serviceName} from magpie at url ${url}`);
@@ -133,8 +135,8 @@ module.exports = {
         .then((response) => {
           console.log(response.body);
           let sanitizedResources = [];
-          if(response.body["resources"][serviceName]) {
-            let resources = response.body["resources"][serviceName][serviceName]["resources"];
+          if(response.body["resources"][serviceType][serviceName]) {
+            let resources = response.body["resources"][serviceType][serviceName]["resources"];
             sanitizedResources = Object.keys(resources).map(p => resources[p]);
           }
           console.log('sanitizedResources %o', sanitizedResources);
@@ -146,7 +148,7 @@ module.exports = {
     })
   },
   // deprecated for now, such route only support admin token
-  getResources: (token = AUTH_TOKEN_COOKIE, serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
+  getResources: (token = AUTH_TOKEN_COOKIE, serviceName = process.env.MAGPIE_PROJECT_SERVICE_NAME) => {
     return new Promise((resolve, reject) => {
       let url = `${process.env.MAGPIE_HOST}/services/${serviceName}/inherited_resources`;
       console.log(`Fetching resources for service ${serviceName} from magpie at url ${url}`);
@@ -198,17 +200,20 @@ module.exports = {
         });
     })
   },
-  registerResource: (resourceName, resourceType = 'route', serviceName = process.env.MAGPIE_PROJECT_SERVICE_TYPE) => {
+  registerResource: (resourceName,
+                     resourceType = process.env.MAGPIE_PROJECT_RESOURCE_TYPE,
+                     serviceName = process.env.MAGPIE_PROJECT_SERVICE_NAME) => {
     // This method needs the admin privileges to be executed with success
     return new Promise((resolve, reject) => {
       let url = `${process.env.MAGPIE_HOST}/services/${serviceName}/resources`;
-      console.log(`Registering a new resource in magpie at url ${url}`);
+      const body = {
+        "resource_name": resourceName.toString(),
+        "resource_type": resourceType
+      };
+      console.log(`Registering a new resource in magpie at url ${url}: ${JSON.stringify(body)}`);
       request.post({
         url: url,
-        body: {
-          "resource_name": resourceName,
-          "resource_type": resourceType
-        },
+        body: body,
         headers: {
           'Content-Type' : 'application/json',
           'Cookie': AUTH_TOKEN_COOKIE
@@ -217,7 +222,7 @@ module.exports = {
         json: true
       })
       .then((response) => {
-        console.log(response.body);
+        console.log(JSON.stringify(response.body));
         resolve(response.body['resource']);
       })
       .catch((error) => {
